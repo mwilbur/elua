@@ -36,6 +36,10 @@ TARGET_FLAGS = ['-mcpu=cortex-m3','-mthumb']
 comp.Prepend(CCFLAGS = [TARGET_FLAGS,'-mlittle-endian'])
 comp.Prepend(LINKFLAGS = [TARGET_FLAGS,'-Wl,-e,ResetISR','-Wl,-static'])
 comp.Prepend(ASFLAGS = TARGET_FLAGS)
+minix_stio_obj_dir = '/Users/matt/Projects/minix/lib/libc/build/obj/stdio'
+import glob, os.path
+minix_stio_obj_files = glob.glob(os.path.join(minix_stio_obj_dir,'*.o'))
+comp.Prepend(LINKFLAGS = [minix_stio_obj_files])
 
 # Toolset data
 tools[ 'lm3s' ] = {}

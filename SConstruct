@@ -334,7 +334,9 @@ if not GetOption( 'help' ):
 
   lua_full_files = " " + " ".join( [ "src/lua/%s" % name for name in lua_files.split() ] )
   
-  comp.Append(CPPPATH = ['inc', 'inc/newlib',  'inc/remotefs', 'src/platform', 'src/lua'])
+  #comp.Append(CPPPATH = ['inc', 'inc/newlib',  'inc/remotefs', 'src/platform', 'src/lua'])
+  comp.Append(CPPPATH = [ '/Users/matt/Projects/minix/inlcude','inc', 'inc/minix_clib',  'inc/remotefs', 'src/platform', 'src/lua'])
+  
   if comp['target'] == 'lualong':
     conf.env.Append(CPPDEFINES = ['LUA_NUMBER_INTEGRAL'])
 
@@ -350,6 +352,9 @@ if not GetOption( 'help' ):
 
   # Newlib related files
   newlib_files = " src/newlib/devman.c src/newlib/stubs.c src/newlib/genstd.c src/newlib/stdtcp.c"
+
+  # MINIX libc related files
+  minix_clib_files = " src/minix_clib/devman.c src/minix_clib/stubs.c src/minix_clib/genstd.c src/minix_clib/stdtcp.c"
 
   # UIP files
   uip_files = "uip_arp.c uip.c uiplib.c dhcpc.c psock.c resolv.c"
@@ -380,7 +385,8 @@ if not GetOption( 'help' ):
   execfile( "src/platform/%s/conf.py" % platform )
 
   # Complete file list
-  source_files = Split( app_files + specific_files + newlib_files + uip_files + lua_full_files + module_files + rfs_files )
+#  source_files = Split( app_files + specific_files + newlib_files + uip_files + lua_full_files + module_files + rfs_files )
+  source_files = Split( app_files + specific_files + minix_clib_files + uip_files + lua_full_files + module_files + rfs_files )
   
   comp = conf.Finish()
 

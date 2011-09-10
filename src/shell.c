@@ -206,7 +206,8 @@ static void shell_ls( char* args )
   for( dev = 0; dev < dm_get_num_devices(); dev ++ )
   {  
     pdev = dm_get_device_at( dev );
-    if( pdev->p_opendir_r == NULL || pdev->p_readdir_r == NULL || pdev->p_closedir_r == NULL )
+
+    if( ! dm_dev_capability_dir(pdev) )
       continue;
     d = dm_opendir( pdev->name );
     if( d )
