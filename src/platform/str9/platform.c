@@ -470,18 +470,18 @@ void ADC_IRQHandler( void )
     
       // Fill in smoothing buffer until warmed up
       if ( s->logsmoothlen > 0 && s->smooth_ready == 0)
-	adc_smooth_data( s->id );
+        adc_smooth_data( s->id );
 #if defined( BUF_ENABLE_ADC )
       else if ( s->reqsamples > 1 )
       {
-	buf_write( BUF_ID_ADC, s->id, ( t_buf_data* )s->value_ptr );
-	s->value_fresh = 0;
+        buf_write( BUF_ID_ADC, s->id, ( t_buf_data* )s->value_ptr );
+        s->value_fresh = 0;
       }
 #endif
 
       // If we have the number of requested samples, stop sampling
       if ( adc_samples_available( s->id ) >= s->reqsamples && s->freerunning == 0 )
-	platform_adc_stop( s->id );
+        platform_adc_stop( s->id );
 
       d->seq_ctr++;
     }
@@ -524,12 +524,12 @@ static void platform_setup_adcs()
 
   ADC_ITConfig(ADC_IT_ECV, ENABLE);
 
-  platform_adc_setclock( 0, 0 );
+  platform_adc_set_clock( 0, 0 );
 }
 
 
 // NOTE: On this platform, there is only one ADC, clock settings apply to the whole device
-u32 platform_adc_setclock( unsigned id, u32 frequency )
+u32 platform_adc_set_clock( unsigned id, u32 frequency )
 {
   elua_adc_dev_state *d = adc_get_dev_state( 0 );
   
@@ -658,7 +658,7 @@ u32 platform_pwm_setup( unsigned id, u32 frequency, unsigned duty )
   return base / div;
 }
 
-static u32 platform_pwm_set_clock( unsigned id, u32 clock )
+u32 platform_pwm_set_clock( unsigned id, u32 clock )
 {
   TIM_TypeDef* p_timer = ( TIM_TypeDef* )str9_timer_data[ id ];
   u32 base = ( SCU_GetPCLKFreqValue() * 1000 );
@@ -668,31 +668,25 @@ static u32 platform_pwm_set_clock( unsigned id, u32 clock )
   return base / div;
 }
 
-u32 platform_pwm_op( unsigned id, int op, u32 data )
+u32 platform_pwm_get_clock( unsigned id )
 {
-  u32 res = 0;
   TIM_TypeDef* p_timer = ( TIM_TypeDef* )str9_timer_data[ id ];
 
-  switch( op )
-  {
-    case PLATFORM_PWM_OP_START:
-      TIM_CounterCmd( p_timer, TIM_START );
-      break;
+  return ( SCU_GetPCLKFreqValue() * 1000 ) / ( TIM_GetPrescalerValue( p_timer ) + 1 );
+}
 
-    case PLATFORM_PWM_OP_STOP:
-      TIM_CounterCmd( p_timer, TIM_STOP );
-      break;
+void platform_pwm_start( unsigned id )
+{
+  TIM_TypeDef* p_timer = ( TIM_TypeDef* )str9_timer_data[ id ];
 
-    case PLATFORM_PWM_OP_SET_CLOCK:
-      res = platform_pwm_set_clock( id, data );
-      break;
+  TIM_CounterCmd( p_timer, TIM_START );
+}
 
-    case PLATFORM_PWM_OP_GET_CLOCK:
-      res = ( SCU_GetPCLKFreqValue() * 1000 ) / ( TIM_GetPrescalerValue( p_timer ) + 1 );
-      break;
-  }
+void platform_pwm_stop( unsigned id )
+{
+  TIM_TypeDef* p_timer = ( TIM_TypeDef* )str9_timer_data[ id ];
 
-  return res;
+  TIM_CounterCmd( p_timer, TIM_STOP );
 }
 
 // ****************************************************************************

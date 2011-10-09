@@ -19,6 +19,10 @@ static int pwm_setup( lua_State* L )
   duty = luaL_checkinteger( L, 3 );
   if( duty > 100 )
     duty = 100;
+  if( duty < 0 )
+    duty = 0;
+  if ( freq < 0 )
+    freq = 1;
   freq = platform_pwm_setup( id, freq, duty );
   lua_pushinteger( L, freq );
   return 1;  
@@ -31,7 +35,7 @@ static int pwm_start( lua_State* L )
   
   id = luaL_checkinteger( L, 1 );
   MOD_CHECK_ID( pwm, id );
-  platform_pwm_op( id, PLATFORM_PWM_OP_START, 0 );
+  platform_pwm_start( id );
   return 0;  
 }
 
@@ -42,7 +46,7 @@ static int pwm_stop( lua_State* L )
   
   id = luaL_checkinteger( L, 1 );
   MOD_CHECK_ID( pwm, id );
-  platform_pwm_op( id, PLATFORM_PWM_OP_STOP, 0 );
+  platform_pwm_stop( id );
   return 0;  
 }
 
@@ -55,7 +59,7 @@ static int pwm_setclock( lua_State* L )
   id = luaL_checkinteger( L, 1 );
   MOD_CHECK_ID( pwm, id );
   clk = luaL_checkinteger( L, 2 );
-  clk = platform_pwm_op( id, PLATFORM_PWM_OP_SET_CLOCK, clk );
+  clk = platform_pwm_set_clock( id, clk );
   lua_pushinteger( L, clk );
   return 1;
 }
@@ -68,7 +72,7 @@ static int pwm_getclock( lua_State* L )
   
   id = luaL_checkinteger( L, 1 );
   MOD_CHECK_ID( pwm, id );
-  clk = platform_pwm_op( id, PLATFORM_PWM_OP_GET_CLOCK, 0 );
+  clk = platform_pwm_get_clock( id );
   lua_pushinteger( L, clk );
   return 1;
 }
