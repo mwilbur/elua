@@ -336,7 +336,7 @@ if not GetOption( 'help' ):
   lua_full_files = " " + " ".join( [ "src/lua/%s" % name for name in lua_files.split() ] )
   
   #comp.Append(CPPPATH = ['inc', 'inc/newlib',  'inc/remotefs', 'src/platform', 'src/lua'])
-  comp.Append(CPPPATH = [ '/Users/matt/Projects/minix/inlcude','inc', 'inc/minix_clib',  'inc/remotefs', 'src/platform', 'src/lua'])
+  comp.Append(CPPPATH = [ '/Users/matt/Projects/minix/include','inc', 'inc/minix_clib',  'inc/remotefs', 'src/platform', 'src/lua'])
   
   if comp['target'] == 'lualong':
     conf.env.Append(CPPDEFINES = ['LUA_NUMBER_INTEGRAL'])
@@ -348,7 +348,7 @@ if not GetOption( 'help' ):
   local_libs = ''
 
   # Application files
-  app_files = """ src/main.c src/romfs.c src/semifs.c src/xmodem.c src/shell.c src/term.c src/common.c src/common_tmr.c src/buf.c src/elua_adc.c src/dlmalloc.c 
+  app_files = """ src/main.c src/minix_clib/romfs.c src/semifs.c src/xmodem.c src/shell.c src/term.c src/common.c src/common_tmr.c src/buf.c src/elua_adc.c src/dlmalloc.c 
                   src/salloc.c src/luarpc_elua_uart.c src/elua_int.c src/linenoise.c src/common_uart.c src/eluarpc.c """
 
   # Newlib related files
@@ -363,7 +363,7 @@ if not GetOption( 'help' ):
   comp.Append(CPPPATH = ['src/uip'])
 
   # FatFs files
-  app_files = app_files + "src/elua_mmc.c src/mmcfs.c src/fatfs/ff.c src/fatfs/ccsbcs.c "
+  app_files = app_files + "src/elua_mmc.c src/minix_clib/mmcfs.c src/fatfs/ff.c src/fatfs/ccsbcs.c "
   comp.Append(CPPPATH = ['src/fatfs'])
 
   # Lua module files
@@ -375,7 +375,9 @@ if not GetOption( 'help' ):
   rfs_files = " " + " ".join( [ "src/remotefs/%s" % name for name in rfs_names.split() ] )
 
   # Optimizer flags (speed or size)
-  comp.Append(CCFLAGS = ['-Os','-fomit-frame-pointer'])
+  #comp.Append(CCFLAGS = ['-Os','-fomit-frame-pointer'])
+  comp.Append(CCFLAGS = ['-fomit-frame-pointer','-Os','-nostdinc','-D__minix', '-D_MINIX', '-D_EM_WSIZE=4','-DLUA_CROSS_COMPILER'])
+
   #opt += " -ffreestanding"
   #opt += " -fconserve-stack" # conserve stack at potential speed cost, >=GCC4.4
 

@@ -29,19 +29,7 @@
 #ifndef __UIP_CONF_H__
 #define __UIP_CONF_H__
 
-//
-// 8 bit datatype
-// This typedef defines the 8-bit type used throughout uIP.
-//
-typedef unsigned char u8_t;
 
-//
-// 16 bit datatype
-// This typedef defines the 16-bit type used throughout uIP.
-//
-typedef unsigned short u16_t;
-
-//
 // Statistics datatype
 // This typedef defines the dataype used for keeping statistics in
 // uIP.

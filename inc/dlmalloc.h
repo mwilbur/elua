@@ -4,6 +4,7 @@
 // BogdanM: dlmalloc() tuning for eLua
 
 #include <unistd.h>
+#include <stddef.h>
 extern void* elua_sbrk( ptrdiff_t incr );
 #define MORECORE                  elua_sbrk  
 #define USE_DL_PREFIX 

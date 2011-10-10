@@ -1,6 +1,5 @@
 // Newlib stubs implementation
 
-#include <reent.h>
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -18,7 +17,7 @@
 #ifdef USE_MULTIPLE_ALLOCATOR
 #include "dlmalloc.h"
 #else
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 
 // Utility function: look in the device manager table and find the index
@@ -218,27 +217,27 @@ pid_t getpid()
 }
 
 #include <sys/times.h>
-clock_t _times_r( struct _reent* r, struct tms *buf )
+clock_t _times_r(struct tms *buf )
 {
   return 0;
 }
 
-int _unlink_r( struct _reent *r, const char *name )
+int _unlink_r(const char *name )
 {
-  r->_errno = ENOSYS;
+  errno = ENOSYS;
   return -1;
 }
 
-int _link_r( struct _reent *r, const char *c1, const char *c2 )
+int _link_r(const char *c1, const char *c2 )
 {
-  r->_errno = ENOSYS;
+  errno = ENOSYS;
   return -1;
 }
 
 #include <sys/time.h>
-int _gettimeofday_r( struct _reent *r, struct timeval *tv, void *tz )
+int _gettimeofday_r( struct timeval *tv, void *tz )
 {
-  r->_errno = ENOSYS;
+  errno = ENOSYS;
   return -1;  
 }
 
@@ -257,15 +256,15 @@ int _kill( int pid, int sig )
 // If LUA_NUMBER_INTEGRAL is defined, "redirect" printf/scanf calls to their 
 // integer counterparts
 #ifdef LUA_NUMBER_INTEGRAL
-int _vfprintf_r( struct _reent *r, FILE *stream, const char *format, va_list ap )
+int _vfprintf_r( FILE *stream, const char *format, va_list ap )
 {
-  return _vfiprintf_r( r, stream, format, ap );
+  return _vfiprintf_r( stream, format, ap );
 }
 
-extern int __svfiscanf_r(struct _reent *,FILE *, _CONST char *,va_list);
-int __svfscanf_r( struct _reent *r, FILE *stream, const char *format, va_list ap )
+extern int __svfiscanf_r(FILE *, _CONST char *,va_list);
+int __svfscanf_r( FILE *stream, const char *format, va_list ap )
 {
-  return __svfiscanf_r( r, stream, format, ap );
+  return __svfiscanf_r( stream, format, ap );
 }
 #endif // #ifdef LUA_NUMBER_INTEGRAL
 
@@ -279,7 +278,7 @@ static int mem_index;
 #ifdef USE_MULTIPLE_ALLOCATOR
 void* elua_sbrk( ptrdiff_t incr )
 #else
-void* _sbrk_r( struct _reent* r, ptrdiff_t incr )
+void* _sbrk_r( ptrdiff_t incr )
 #endif
 {
   void* ptr;
@@ -320,16 +319,6 @@ void* _sbrk_r( struct _reent* r, ptrdiff_t incr )
   return ptr;
 } 
 
-// mallinfo()
-struct mallinfo mallinfo()
-{
-#ifdef USE_MULTIPLE_ALLOCATOR
-  return dlmallinfo();
-#else
-  return _mallinfo_r( _REENT );
-#endif
-} 
-
 #if defined( USE_MULTIPLE_ALLOCATOR ) || defined( USE_SIMPLE_ALLOCATOR )
 // Redirect all allocator calls to our dlmalloc/salloc 
 
@@ -339,22 +328,22 @@ struct mallinfo mallinfo()
 #define CNAME( func ) s##func
 #endif
 
-void* _malloc_r( struct _reent* r, size_t size )
+void* _malloc_r( size_t size )
 {
   return CNAME( malloc )( size );
 }
 
-void* _calloc_r( struct _reent* r, size_t nelem, size_t elem_size )
+void* _calloc_r( size_t nelem, size_t elem_size )
 {
   return CNAME( calloc )( nelem, elem_size );
 }
 
-void _free_r( struct _reent* r, void* ptr )
+void _free_r( void* ptr )
 {
   CNAME( free )( ptr );
 }
 
-void* _realloc_r( struct _reent* r, void* ptr, size_t size )
+void* _realloc_r( void* ptr, size_t size )
 {
   return CNAME( realloc )( ptr, size );
 }

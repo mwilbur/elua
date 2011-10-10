@@ -16,7 +16,7 @@ static p_std_get_char std_get_char_func;
 int std_prev_char = -1;
 
 // 'read'
-static _ssize_t std_read( struct _reent *r, int fd, void* vptr, size_t len )
+static _ssize_t std_read( int fd, void* vptr, size_t len )
 {
   int i, c;
   char* ptr = ( char* )vptr;
@@ -24,19 +24,19 @@ static _ssize_t std_read( struct _reent *r, int fd, void* vptr, size_t len )
   // Check pointers
   if( !std_send_char_func || !std_get_char_func )
   {
-    r->_errno = EBADF;
+    errno = EBADF;
     return -1;  
   }
   
   // Check file number
   if( ( fd < DM_STDIN_NUM ) || ( fd > DM_STDERR_NUM ) )
   {
-    r->_errno = EBADF;
+    errno = EBADF;
     return -1;
   }  
   if( fd != DM_STDIN_NUM )
   {
-    r->_errno = EINVAL;
+    errno = EINVAL;
     return -1;
   }      
   
@@ -84,7 +84,7 @@ static _ssize_t std_read( struct _reent *r, int fd, void* vptr, size_t len )
 }
 
 // 'write'
-static _ssize_t std_write( struct _reent *r, int fd, const void* vptr, size_t len )
+static _ssize_t std_write( int fd, const void* vptr, size_t len )
 {   
   int i;
   const char* ptr = ( const char* )vptr;
@@ -92,19 +92,19 @@ static _ssize_t std_write( struct _reent *r, int fd, const void* vptr, size_t le
   // Check pointers
   if( !std_send_char_func || !std_get_char_func )
   {
-    r->_errno = EBADF;
+    errno = EBADF;
     return -1;  
   }
     
   // Check file number
   if( ( fd < DM_STDIN_NUM ) || ( fd > DM_STDERR_NUM ) )
   {
-    r->_errno = EBADF;
+    errno = EBADF;
     return -1;
   }    
   if( ( fd != DM_STDOUT_NUM ) && ( fd != DM_STDERR_NUM ) )
   {
-    r->_errno = EINVAL;
+    errno = EINVAL;
     return -1;
   }  
   

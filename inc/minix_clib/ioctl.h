@@ -3,7 +3,7 @@
 #ifndef __IOCTL_H__
 #define __IOCTL_H__
 
-#include <reent.h>
+typedef off_t _off_t;
 
 // **************************  Generic IOCTL calls *****************************
 

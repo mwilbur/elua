@@ -39,6 +39,7 @@ typedef struct {
   void *userdata;
 } DM_DIR;
 
+typedef ssize_t _ssize_t;
 // A device structure with pointers to all the device functions
 typedef struct
 {

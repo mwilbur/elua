@@ -13,6 +13,7 @@
 #include "utils.h"
 #include "uip-split.h"
 #include "dhcpc.h"
+#include "netdb.h"
 #include "resolv.h"
 #include <string.h>
 
