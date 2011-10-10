@@ -278,7 +278,7 @@ static int mem_index;
 #ifdef USE_MULTIPLE_ALLOCATOR
 void* elua_sbrk( ptrdiff_t incr )
 #else
-void* _sbrk_r( ptrdiff_t incr )
+void* _sbrk( ptrdiff_t incr )
 #endif
 {
   void* ptr;
