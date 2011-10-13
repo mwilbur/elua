@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <signal.h>
 #include "devman.h"
 #include "ioctl.h"
 #include "platform.h"
@@ -19,6 +20,14 @@
 #else
 #include <stdlib.h>
 #endif
+
+
+char environ[] = "";  
+const char *penviron = environ;
+const char **ppenviron = &penviron;
+const char ***_penviron = &(ppenviron);
+
+
 
 // Utility function: look in the device manager table and find the index
 // for the given name. Returns an index into the device structure, -1 if error.
@@ -127,7 +136,7 @@ int _close( int file )
 
 // *****************************************************************************
 // _fstat (not implemented)
-int _fstat( int file, struct stat *st )
+int fstat( int file, struct stat *st )
 {
   if( ( file >= DM_STDIN_NUM ) && ( file <= DM_STDERR_NUM ) )
   {
@@ -222,13 +231,19 @@ clock_t _times_r(struct tms *buf )
   return 0;
 }
 
-int _unlink_r(const char *name )
+int _rmdir(const char *name )
 {
   errno = ENOSYS;
   return -1;
 }
 
-int _link_r(const char *c1, const char *c2 )
+int _unlink(const char *name )
+{
+  errno = ENOSYS;
+  return -1;
+}
+
+int _link(const char *c1, const char *c2 )
 {
   errno = ENOSYS;
   return -1;
@@ -251,6 +266,12 @@ int _kill( int pid, int sig )
 {
   return -1;
 }
+
+int _sigaction(int _sig, const struct sigaction *_act, struct sigaction *_oact)
+{
+  return -1;
+}
+
 #endif
 
 // If LUA_NUMBER_INTEGRAL is defined, "redirect" printf/scanf calls to their 

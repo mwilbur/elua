@@ -376,7 +376,7 @@ if not GetOption( 'help' ):
 
   # Optimizer flags (speed or size)
   #comp.Append(CCFLAGS = ['-Os','-fomit-frame-pointer'])
-  comp.Append(CCFLAGS = ['-fomit-frame-pointer','-Os','-nostdinc','-D__minix', '-D_MINIX', '-D_EM_WSIZE=4','-DLUA_CROSS_COMPILER'])
+  comp.Append(CCFLAGS = ['-gdwarf-2','-fomit-frame-pointer','-Os','-nostdinc','-D__minix', '-D_MINIX', '-D_EM_WSIZE=4','-DLUA_CROSS_COMPILER'])
 
   #opt += " -ffreestanding"
   #opt += " -fconserve-stack" # conserve stack at potential speed cost, >=GCC4.4
