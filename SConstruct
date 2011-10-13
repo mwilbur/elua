@@ -336,7 +336,7 @@ if not GetOption( 'help' ):
   lua_full_files = " " + " ".join( [ "src/lua/%s" % name for name in lua_files.split() ] )
   
   #comp.Append(CPPPATH = ['inc', 'inc/newlib',  'inc/remotefs', 'src/platform', 'src/lua'])
-  comp.Append(CPPPATH = [ '/Users/matt/Projects/minix/include','inc', 'inc/minix_clib',  'inc/remotefs', 'src/platform', 'src/lua'])
+  comp.Append(CPPPATH = [ os.environ['HOME']+'/Projects/minix/include','inc', 'inc/minix_clib',  'inc/remotefs', 'src/platform', 'src/lua'])
   
   if comp['target'] == 'lualong':
     conf.env.Append(CPPDEFINES = ['LUA_NUMBER_INTEGRAL'])
