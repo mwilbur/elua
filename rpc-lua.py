@@ -32,3 +32,4 @@ comp = Environment( CCCOM = cccom,
 # Debug
 Decider( 'MD5-timestamp' )                  
 Default( comp.Program( output, Split( lua_full_files ) ) )
+Default( comp.StaticLibrary( output, Split( lua_full_files ) ) )
