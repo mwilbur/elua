@@ -206,7 +206,7 @@ for k, v in pairs( board_list ) do
   end
 end
 
-builder:add_option( 'target', 'build "regular" float lua or integer-only "lualong"', 'lua', { 'lua', 'lualong' } )
+builder:add_option( 'target', 'build "regular" float lua, 32 bit integer-only "lualong" or 64-bit integer only lua "lualonglong"', 'lua', { 'lua', 'lualong', 'lualonglong' } )
 builder:add_option( 'cpu', 'build for the specified CPU (board will be inferred, if possible)', 'auto', { cpu_list, 'auto' } )
 builder:add_option( 'allocator', 'select memory allocator', 'auto', { 'newlib', 'multiple', 'simple', 'auto' } )
 builder:add_option( 'board', 'selects board for target (cpu will be inferred)', 'auto', { utils.table_keys( board_list ), 'auto' } )
@@ -310,6 +310,10 @@ end
 -- Build the compilation command now
 local fscompcmd = ''
 if comp.romfs == 'compile' then
+  if comp.target == 'lualonglong' then
+    print "Cross-compilation is not yet supported for 64-bit integer only Lua (lualonglong)."
+    os.exit( -1 )
+  end
   local suffix = ''
   if utils.is_windows() then
     suffix = '.exe'
@@ -362,7 +366,8 @@ elseif comp.allocator == 'simple' then
    addm( "USE_SIMPLE_ALLOCATOR" )
 end
 if comp.boot == 'luarpc' then addm( "ELUA_BOOT_RPC" ) end
-if comp.target == 'lualong' then addm( "LUA_NUMBER_INTEGRAL" ) end
+if comp.target == 'lualong' or comp.target == 'lualonglong' then addm( "LUA_NUMBER_INTEGRAL" ) end
+if comp.target == 'lualonglong' then addm( "LUA_INTEGRAL_LONGLONG" ) end
 
 -- Special macro definitions for the SYM target
 if platform == 'sim' then addm( { "ELUA_SIMULATOR", "ELUA_SIM_" .. cnorm( comp.cpu ) } ) end
@@ -398,14 +403,24 @@ source_files = source_files .. uip_files .. specific_files
 -- Create compiler/linker/assembler command lines and build
 
 -- ROM file system builder
+
+romfs_exclude_patterns = { '%.DS_Store', '%.gitignore' }
+
+function match_pattern_list( item, list )
+  for k, v in pairs( list ) do
+     if item:find(v) then return true end
+  end
+end
+
 local function make_romfs()
   print "Building ROM file system ..."
   local flist = {}
-  flist = utils.string_to_table( utils.get_files( 'romfs', function( fname ) return not fname:find( "%.gitignore" ) end ) )
+  flist = utils.string_to_table( utils.get_files( 'romfs', function( fname ) return not match_pattern_list( fname, romfs_exclude_patterns ) end ) )
   flist = utils.linearize_array( flist )  
   for k, v in pairs( flist ) do
     flist[ k ] = v:gsub( "romfs" .. utils.dir_sep, "" )
   end
+
   if not mkfs.mkfs( "romfs", "romfiles", flist, comp.romfs, fscompcmd ) then return -1 end
   if utils.is_file( "inc/romfiles.h" ) then
     -- Read both the old and the new file

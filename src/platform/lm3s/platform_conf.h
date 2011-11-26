@@ -4,44 +4,54 @@
 #define __PLATFORM_CONF_H__
 
 #include "auxmods.h"
-#include "hw_memmap.h"
-#include "hw_types.h"
+#include "inc/hw_memmap.h"
+#include "inc/hw_types.h"
 #include "stacks.h"
-#include "sysctl.h"
+#include "driverlib/sysctl.h"
 #include "elua_int.h"
 
 // *****************************************************************************
 // Define here what components you want for this platform
-#if !defined( ELUA_BOARD_SOLDERCORE )
+//#if !defined( ELUA_BOARD_SOLDERCORE )
   #define BUILD_XMODEM
   #define BUILD_TERM
-#endif
+//#endif
 
 #define BUILD_SHELL
 #define BUILD_ROMFS
 #define BUILD_MMCFS
 
+#if defined( ELUA_BOARD_SOLDERCORE )
+  #define BUILD_USB_CDC
+#endif
+
 #ifndef FORLM3S1968
   #define BUILD_UIP
-//  #define BUILD_DHCPC
+  #define BUILD_DHCPC
   #define BUILD_DNS
 #endif  
 
 #define BUILD_ADC
 #define BUILD_RPC
-#if defined( ELUA_BOARD_SOLDERCORE )
-  #define BUILD_CON_TCP
-#else
+//#if defined( ELUA_BOARD_SOLDERCORE )
+//  #define BUILD_CON_TCP
+//#else
   #define BUILD_CON_GENERIC
-#endif
+//#endif
 #define BUILD_C_INT_HANDLERS
+
+#define PLATFORM_HAS_SYSTIMER
 
 // *****************************************************************************
 // UART/Timer IDs configuration data (used in main.c)
 
+#if defined( ELUA_BOARD_SOLDERCORE )
+#define CON_UART_ID         CDC_UART_ID
+#else
 #define CON_UART_ID           0
+#endif
+
 #define CON_UART_SPEED        115200
-#define CON_TIMER_ID          0
 #define TERM_LINES            25
 #define TERM_COLS             80
 
@@ -175,17 +185,23 @@
   #define NUM_UART            2
 #endif
 #define NUM_TIMER             4
-#ifndef FORLM3S6918
-  #define NUM_PWM             6
-#else
+#if defined( FORLM3S6918 )
   #define NUM_PWM             0
+#elif defined( FORLM3S9B92 ) || defined( FORLM3S9D92 )
+  #define NUM_PWM             8
+#else
+  #define NUM_PWM             6
 #endif  
+#if defined( FORLM3S9B92 ) || defined( FORLM3S9D92 )
+#define NUM_ADC               16
+#else
 #define NUM_ADC               4
+#endif
 #define NUM_CAN               1
 
 // Enable RX buffering on UART
-#define BUF_ENABLE_UART
-#define CON_BUF_SIZE          BUF_SIZE_128
+//#define BUF_ENABLE_UART
+//#define CON_BUF_SIZE          BUF_SIZE_128
 
 // ADC Configuration Params
 #define ADC_BIT_RESOLUTION    10
@@ -198,12 +214,7 @@
 
 // RPC boot options
 #define RPC_UART_ID           CON_UART_ID
-#define RPC_TIMER_ID          CON_TIMER_ID
 #define RPC_UART_SPEED        CON_UART_SPEED
-
-// SD/MMC Filesystem Setup
-#define MMCFS_TICK_HZ     4
-#define MMCFS_TICK_MS     ( 1000 / MMCFS_TICK_HZ )
 
 #if defined( ELUA_BOARD_EKLM3S6965 )
   // EK-LM3S6965
@@ -231,7 +242,7 @@
 #endif
 
 
-// CPU frequency (needed by the CPU module, 0 if not used)
+// CPU frequency (needed by the CPU module and MMCFS code, 0 if not used)
 #define CPU_FREQUENCY         SysCtlClockGet()
 
 // PIO prefix ('0' for P0, P1, ... or 'A' for PA, PB, ...)
