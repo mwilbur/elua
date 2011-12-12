@@ -19,16 +19,20 @@
 
 #define BUILD_SHELL
 #define BUILD_ROMFS
+#if 0
 #define BUILD_MMCFS
+#endif
 
 #if defined( ELUA_BOARD_SOLDERCORE )
   #define BUILD_USB_CDC
 #endif
 
+#if 0
 #ifndef FORLM3S1968
   #define BUILD_UIP
   #define BUILD_DHCPC
   #define BUILD_DNS
+#endif
 #endif  
 
 #define BUILD_ADC

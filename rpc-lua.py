@@ -1,7 +1,7 @@
 import os, sys, platform
 
 output = 'luarpc'
-cdefs = "-DLUA_CROSS_COMPILER -DLUA_RPC"
+cdefs = "-DLUA_INTEGRAL_LONG -DLUA_NUMBER_INTEGRAL -DLUA_CROSS_COMPILER -DLUA_RPC"
 
 # Lua source files and include path
 lua_files = """lapi.c lcode.c ldebug.c ldo.c ldump.c lfunc.c lgc.c llex.c lmem.c lobject.c lopcodes.c
@@ -22,7 +22,7 @@ else:
 local_include = "-Isrc/lua -Iinc -Isrc/modules -Iinc/desktop"
 
 # Compiler/linker options
-cccom = "gcc -O2 -g %s -Wall %s -c $SOURCE -o $TARGET" % ( local_include, cdefs )
+cccom = "gcc -O0 -gdwarf-2 %s -Wall %s -c $SOURCE -o $TARGET" % ( local_include, cdefs )
 linkcom = "gcc -o $TARGET $SOURCES %s" % external_libs
 
 # Env for building the program

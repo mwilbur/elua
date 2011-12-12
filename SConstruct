@@ -375,7 +375,8 @@ if not GetOption( 'help' ):
   rfs_files = " " + " ".join( [ "src/remotefs/%s" % name for name in rfs_names.split() ] )
 
   # Optimizer flags (speed or size)
-  comp.Append(CCFLAGS = ['-Os','-fomit-frame-pointer'])
+  #comp.Append(CCFLAGS = ['-Os','-fomit-frame-pointer'])
+  comp.Append(CCFLAGS = ['-O0','-gdwarf-2'])
   #opt += " -ffreestanding"
   #opt += " -fconserve-stack" # conserve stack at potential speed cost, >=GCC4.4
 
